@@ -3,12 +3,13 @@
  * 描述：config 文件读取   
  * 修改记录： 
 *********************************************************************************/
+
 using System;
 using System.Configuration;
 
-namespace Panda.Code.Configs
+namespace Panda.Code
 {
-    public class Config
+    public class Configs
     {
         #region 得到Connection中配置字符串信息
         /// <summary>
@@ -28,12 +29,11 @@ namespace Panda.Code.Configs
         /// </summary>
         /// <param name="key">AppSetting中关键字KEY</param>
         /// <returns>AppSettings中的配置字符串信息</returns>
-        public static string GetString(string key)
+        public static string GetValue(string key)
         {
             return ConfigurationManager.AppSettings[key].ToString();
         }
         #endregion
-
 
 
         #region 得到AppSettings中的配置Bool信息
@@ -45,7 +45,7 @@ namespace Panda.Code.Configs
         public static bool GetBool(string key)
         {
             bool result = false;
-            string cfgVal = GetString(key);
+            string cfgVal = GetValue(key);
             if (!string.IsNullOrEmpty(cfgVal))
             {
                 try
@@ -70,7 +70,7 @@ namespace Panda.Code.Configs
         public static decimal GetDecimal(string key)
         {
             decimal result = 0;
-            string cfgVal = GetString(key);
+            string cfgVal = GetValue(key);
             if (!string.IsNullOrEmpty(cfgVal))
             {
                 try
@@ -96,7 +96,7 @@ namespace Panda.Code.Configs
         public static int GetInt(string key)
         {
             int result = 0;
-            string cfgVal = GetString(key);
+            string cfgVal = GetValue(key);
             if (!string.IsNullOrEmpty(cfgVal))
             {
                 try
