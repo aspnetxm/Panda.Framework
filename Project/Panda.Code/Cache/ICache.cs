@@ -3,11 +3,8 @@
  * 描述：缓存操作接口   
  * 修改记录： 
 *********************************************************************************/
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Panda.Code.Cache
 {
@@ -42,9 +39,9 @@ namespace Panda.Code.Cache
         /// <param name="key">key</param>
         void Remove(string key);
 
-        /// <summary>
-        /// 删除所有缓存
-        /// </summary>
-        void Remove();
+        ///// <summary>
+        ///// 删除所有缓存
+        ///// </summary>
+        //void Remove();
     }
 }
