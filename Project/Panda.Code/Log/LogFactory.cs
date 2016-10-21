@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
+using NLog;
 
 namespace Panda.Code
 {
@@ -10,12 +12,11 @@ namespace Panda.Code
     {
         static LogFactory()
         {
-            FileInfo configFile = new FileInfo(HttpContext.Current.Server.MapPath("/Configs/log4net.config"));
-            log4net.Config.XmlConfigurator.Configure(configFile);
+           
         }
         public static Log GetLogger(Type type)
         {
-            return new Log(LogManager.GetLogger(type));
+            return new Log(LogManager.GetLogger(type.Name));
         }
         public static Log GetLogger(string str)
         {

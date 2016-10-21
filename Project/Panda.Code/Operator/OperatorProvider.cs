@@ -1,15 +1,10 @@
-﻿using System;
-/*******************************************************************************
+﻿/*******************************************************************************
  * 作者：星星    
  * 描述：Web Helper  
  * 修改记录： 
 *********************************************************************************/
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System;
 
 namespace Panda.Code
 {
@@ -19,6 +14,7 @@ namespace Panda.Code
         {
             get { return new OperatorProvider(); }
         }
+
         private string LoginUserKey = "PandaLoginuserkey_2016";
         private string LoginProvider = Configs.GetValue("LoginProvider");
 
@@ -27,11 +23,11 @@ namespace Panda.Code
             OperatorModel operatorModel = new OperatorModel();
             if (LoginProvider == "Cookie")
             {
-                operatorModel = DESEncrypt.Decrypt(WebHelper.GetCookie(LoginUserKey).ToString()).ToObject<OperatorModel>();
+                operatorModel = AES.Decrypt(WebHelper.GetCookie(LoginUserKey).ToString()).ToObject<OperatorModel>();
             }
             else
             {
-                operatorModel = DESEncrypt.Decrypt(WebHelper.GetSession(LoginUserKey).ToString()).ToObject<OperatorModel>();
+                operatorModel = AES.Decrypt(WebHelper.GetSession(LoginUserKey).ToString()).ToObject<OperatorModel>();
             }
             return operatorModel;
         }
@@ -40,14 +36,13 @@ namespace Panda.Code
         {
             if (LoginProvider == "Cookie")
             {
-                WebHelper.WriteCookie(LoginUserKey, DESEncrypt.Encrypt(operatorModel.ToJson()), 60);
+                WebHelper.WriteCookie(LoginUserKey, AES.Encrypt(operatorModel.ToJson()), 60);
             }
             else
             {
-                WebHelper.WriteSession(LoginUserKey, DESEncrypt.Encrypt(operatorModel.ToJson()));
+                WebHelper.WriteSession(LoginUserKey, AES.Encrypt(operatorModel.ToJson()));
             }
-            WebHelper.WriteCookie("Novots_mac", Md5.md5(Net.GetMacByNetworkInterface().ToJson(), 32));
-            WebHelper.WriteCookie("Novots_licence", Licence.GetLicence());
+
         }
 
         public void RemoveCurrent()

@@ -47,10 +47,8 @@ namespace Panda.Code.Cache
             CacheItemPolicy policy = null;
             if (expireTime.HasValue && expireTime > 0)
             {
-                policy = new CacheItemPolicy
-                {
-                    AbsoluteExpiration = DateTime.Now + TimeSpan.FromMinutes(expireTime.Value)
-                };
+                policy = new CacheItemPolicy();
+                policy.AbsoluteExpiration = DateTime.Now + TimeSpan.FromMinutes(expireTime.Value);
             }
             cache.Set(new CacheItem(key, data), policy);
         }
@@ -80,13 +78,13 @@ namespace Panda.Code.Cache
             cache.Remove(key);
         }
 
-        /// <summary>
-        /// 删除所有缓存
-        /// </summary>
-        public void Remove()
-        {
-            cache.Trim(100);
-        }
+        ///// <summary>
+        ///// 删除所有缓存
+        ///// </summary>
+        //public void Remove()
+        //{
+        //    cache.Trim(100);
+        //}
 
         /// <summary>
         /// 合并key
