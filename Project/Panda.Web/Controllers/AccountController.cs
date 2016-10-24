@@ -12,8 +12,8 @@ namespace Panda.Web.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        //private ApplicationSignInManager _signInManager;
+        //private ApplicationUserManager _userManager;
 
         public AccountController()
         {
@@ -123,17 +123,17 @@ namespace Panda.Web.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
-                {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
+                //if (_userManager != null)
+                //{
+                //    _userManager.Dispose();
+                //    _userManager = null;
+                //}
 
-                if (_signInManager != null)
-                {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
+                //if (_signInManager != null)
+                //{
+                //    _signInManager.Dispose();
+                //    _signInManager = null;
+                //}
             }
 
             base.Dispose(disposing);

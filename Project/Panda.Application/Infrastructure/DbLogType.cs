@@ -3,10 +3,7 @@
  * 描述：日志类型  
  * 修改记录： 
 *********************************************************************************/
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-
 
 namespace Panda.Application
 {

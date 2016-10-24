@@ -14,9 +14,9 @@ namespace Panda.Repository.SystemManage
     {
         public void SubmitCloneButton(List<ModuleButtonEntity> entitys)
         {
-            using (var db = new RepositoryBase())
+            using (var db = new RepositoryBase().BeginTrans())
             {
-                db.BeginTrans();
+
                 foreach (var item in entitys)
                 {
                     db.Insert(item);

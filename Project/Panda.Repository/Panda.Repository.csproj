@@ -56,6 +56,10 @@
     <Compile Include="SystemSecurity\LogRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Panda.Code\Panda.Code.csproj">
+      <Project>{21069099-a960-4d91-a59c-ee59516fd52c}</Project>
+      <Name>Panda.Code</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Panda.Data\Panda.Data.csproj">
       <Project>{35e96ba2-1bce-4867-a878-f2f71d65ccef}</Project>
       <Name>Panda.Data</Name>

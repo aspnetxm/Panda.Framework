@@ -3,12 +3,14 @@
  * 描述：  
  * 修改记录： 
 *********************************************************************************/
+using System;
+using System.Collections.Generic;
 using Panda.Code;
 using Panda.Domain.Entity.SystemSecurity;
 using Panda.Domain.IRepository.SystemSecurity;
 using Panda.Repository.SystemSecurity;
-using System;
-using System.Collections.Generic;
+using Panda.Data;
+
 
 namespace Panda.Application.SystemSecurity
 {
@@ -28,8 +30,8 @@ namespace Panda.Application.SystemSecurity
             if (!queryParam["timeType"].IsEmpty())
             {
                 string timeType = queryParam["timeType"].ToString();
-                DateTime startTime = DateTime.Now.ToString("yyyy-MM-dd").ToDate();
-                DateTime endTime = DateTime.Now.ToString("yyyy-MM-dd").ToDate().AddDays(1);
+                DateTime startTime = DateTime.Today;
+                DateTime endTime = DateTime.Today.AddDays(1);
                 switch (timeType)
                 {
                     case "1":

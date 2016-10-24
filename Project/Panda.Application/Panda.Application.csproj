@@ -62,6 +62,10 @@
       <Project>{21069099-a960-4d91-a59c-ee59516fd52c}</Project>
       <Name>Panda.Code</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Panda.Data\Panda.Data.csproj">
+      <Project>{35e96ba2-1bce-4867-a878-f2f71d65ccef}</Project>
+      <Name>Panda.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Panda.Domain\Panda.Domain.csproj">
       <Project>{1381896d-4e9a-4b5b-8822-193165f90d30}</Project>
       <Name>Panda.Domain</Name>

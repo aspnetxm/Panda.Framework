@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace Panda.Data
 {
-    public interface IRepositoryBase
+    public interface IRepositoryBase : IDisposable
     {
         IRepositoryBase BeginTrans();
         int Commit();
