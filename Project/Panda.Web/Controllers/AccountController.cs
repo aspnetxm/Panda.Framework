@@ -6,48 +6,21 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Panda.Web.Models;
+using Panda.Application.SystemManage;
+using Panda.Code;
+using Panda.Application.Service;
 
 namespace Panda.Web.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        //private ApplicationSignInManager _signInManager;
-        //private ApplicationUserManager _userManager;
+        private IUserService _userService;
 
-        public AccountController()
+        public AccountController(IUserService userService)
         {
+            _userService = userService;
         }
-
-        //public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
-        //{
-        //    UserManager = userManager;
-        //    SignInManager = signInManager;
-        //}
-
-        //public ApplicationSignInManager SignInManager
-        //{
-        //    get
-        //    {
-        //        return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-        //    }
-        //    private set 
-        //    { 
-        //        _signInManager = value; 
-        //    }
-        //}
-
-        //public ApplicationUserManager UserManager
-        //{
-        //    get
-        //    {
-        //        return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-        //    }
-        //    private set
-        //    {
-        //        _userManager = value;
-        //    }
-        //}
 
         //
         // GET: /Account/Login
@@ -63,50 +36,35 @@ namespace Panda.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return Json(new { state = "error", message = ModelState.GetEnumerator().Current.Value });
             }
-           
 
-            //ClaimsIdentity indentiy = Task.Factory.StartNew(s =>
-            //{
-            //    return user.GenerateUserIdentityAsync(((ApplicationUserManager)s));
-            //}, UserManager).Unwrap().GetAwaiter().GetResult();
+            try
+            {
+                var user = _userService.Login(model.UserName, model.Password);
 
+                //登录成功 
+                ClaimsIdentity identity = new ClaimsIdentity(DefaultAuthenticationTypes.ApplicationCookie);
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.F_Account));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.F_Id));
+                //identity.AddClaim(new Claim(ClaimTypes.PrimarySid, user.Id));
+                identity.AddClaim(new Claim("DisplayName", user.F_NickName));
 
-            //登录成功 
+                AuthenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
+                //return RedirectToLocal(returnUrl);
 
-            ClaimsIdentity identity = new ClaimsIdentity(DefaultAuthenticationTypes.ApplicationCookie);
-            identity.AddClaim(new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity"));
-            //identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
-            //identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-            //identity.AddClaim(new Claim(ClaimTypes.PrimarySid, user.Id));
-            //identity.AddClaim(new Claim("DisplayName", user.UserName));
+                return Json(new { state = "success", message = "登录成功。", returnUrl = GetRedirectToLocal(returnUrl) });
+            }
+            catch (Exception exc)
+            {
+                ModelState.AddModelError("", exc.Message);
 
-
-            AuthenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
-
-            //// 这不会计入到为执行帐户锁定而统计的登录失败次数中
-            //// 若要在多次输入错误密码的情况下触发帐户锁定，请更改为 shouldLockout: true
-            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            //switch (result)
-            //{
-            //    case SignInStatus.Success:
-            //        return RedirectToLocal(returnUrl);
-            //    case SignInStatus.LockedOut:
-            //        return View("Lockout");
-            //    case SignInStatus.RequiresVerification:
-            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-            //    case SignInStatus.Failure:
-            //    default:
-            //        ModelState.AddModelError("", "无效的登录尝试。");
-            //        return View(model);
-            //}
-
-            return RedirectToLocal(returnUrl);
+                return Json(new { state = "error", message = exc.Message });
+            }
         }
 
         //
@@ -119,25 +77,27 @@ namespace Panda.Web.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// 验证码
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult GetAuthCode()
         {
-            if (disposing)
-            {
-                //if (_userManager != null)
-                //{
-                //    _userManager.Dispose();
-                //    _userManager = null;
-                //}
-
-                //if (_signInManager != null)
-                //{
-                //    _signInManager.Dispose();
-                //    _signInManager = null;
-                //}
-            }
-
-            base.Dispose(disposing);
+            Captcha captcha = new Captcha();
+            captcha.FontSize = 24f;
+            Session["Code"] = captcha.Code;
+            return File(captcha.Image(), @"image/Gif");
         }
+
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //    }
+
+        //    base.Dispose(disposing);
+        //}
 
         #region 帮助程序
         // 用于在添加外部登录名时提供 XSRF 保护
@@ -166,6 +126,14 @@ namespace Panda.Web.Controllers
                 return Redirect(returnUrl);
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        private string GetRedirectToLocal(string returnUrl) {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return returnUrl;
+            }
+            return Url.Action("Index", "Home");
         }
 
         #endregion

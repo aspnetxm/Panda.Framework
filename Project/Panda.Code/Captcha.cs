@@ -36,31 +36,32 @@ namespace Panda.Code
         /// </summary>
         public bool QJGL { get; set; } = false;
 
-        public byte[] ImageData
+        public byte[] Image()
         {
-            get
+            GenerateImage();
+            byte[] result = null;
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                byte[] result = null;
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    image.Save(memoryStream, ImageFormat.Jpeg);
-                    result = memoryStream.GetBuffer();
-                }
-                return result;
+                image.Save(memoryStream, ImageFormat.Jpeg);
+                result = memoryStream.GetBuffer();
             }
+            return result;
+
         }
 
-        public Captcha( int len = 4 )
+        public Captcha(int len = 4)
         {
             length = len;
             Code = GenerateRandomCode();
-            GenerateImage();
         }
+         
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
             Dispose(true);
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -75,14 +76,14 @@ namespace Panda.Code
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             Rectangle rectangle = new Rectangle(0, 0, Width, Height);
-            HatchBrush hatchBrush = new HatchBrush(HatchStyle.SmallConfetti, Color.LightGray, Color.White);
+            HatchBrush hatchBrush = new HatchBrush(HatchStyle.NarrowVertical, Color.LightGray, Color.White);
             graphics.FillRectangle(hatchBrush, rectangle);
             float num = (float)(rectangle.Height + 1);
             Font font;
             do
             {
                 num -= 1f;
-                font = new Font(FontFamily.GenericSansSerif, num, FontStyle.Bold);
+                font = new Font(new FontFamily("Times New Roman"), num, FontStyle.Bold);
             }
             while (graphics.MeasureString(Code, font).Width > (float)rectangle.Width);
 
@@ -102,7 +103,7 @@ namespace Panda.Code
             Matrix matrix = new Matrix();
             matrix.Translate(0f, 0f);
             graphicsPath.Warp(destPoints, rectangle, matrix, WarpMode.Perspective, 0f);
-            hatchBrush = new HatchBrush(HatchStyle.Percent10, Color.Black, Color.SkyBlue);
+            hatchBrush = new HatchBrush(HatchStyle.Horizontal, Color.Blue, Color.Green);
             graphics.FillPath(hatchBrush, graphicsPath);
 
             if (QJGL)
@@ -122,12 +123,12 @@ namespace Panda.Code
             hatchBrush.Dispose();
             graphics.Dispose();
 
-            image = TwistImage(bitmap, true, 10, 1);
+            image = TwistImage(bitmap, true, 1, 1);
         }
         private string GenerateRandomCode()
         {
             Random random = new Random();
-            char[] array = { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'd', 'e', 'f', 'h', 'k', 'm', 'n', 'r', 'x', 'y', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'W', 'X', 'Y' }; 
+            char[] array = { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'd', 'e', 'f', 'h', 'k', 'm', 'n', 'r', 'x', 'y', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'W', 'X', 'Y' };
             int maxValue = array.Length - 1;
             string text = "";
             for (int i = 0; i < length; i++)
@@ -136,6 +137,8 @@ namespace Panda.Code
                 random.NextDouble();
                 random.Next(100, 1999);
             }
+            System.Diagnostics.Debug.Print(text);
+           
             return text;
         }
 

@@ -50,7 +50,7 @@ namespace Panda.Code.Cache
             if (db.KeyExists(key))
             {
                 string result = db.StringGet(key);
-                return JsonHelper.Deserialize<T>(result);
+                return Json.Deserialize<T>(result);
             }
             return default(T);
         }
@@ -61,7 +61,7 @@ namespace Panda.Code.Cache
         /// <param name="key">key</param>
         /// <param name="data">缓存值</param>
         /// <param name="cacheTime">超时时间（按分钟）</param>
-        public void Set<T>(string key, T data, int? expireTime) where T : class
+        public void Set(string key, dynamic data, int? expireTime)
         {
             if (string.IsNullOrWhiteSpace(key))
                 new NullReferenceException("Get方法的{key}参数值为空。");
@@ -74,8 +74,8 @@ namespace Panda.Code.Cache
                 t = new TimeSpan(0, expireTime.Value, 0);
 
             IDatabase db = RedisConnection.GetDatabase();
-           
-            db.StringSet(key, JsonHelper.Serialize(data), t);
+
+            db.StringSet(key, Json.Serialize(data), t);
         }
 
         /// <summary>

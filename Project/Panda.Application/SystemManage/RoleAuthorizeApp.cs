@@ -3,14 +3,15 @@
  * 描述：  
  * 修改记录： 
 *********************************************************************************/
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Panda.Code;
 using Panda.Domain.Entity.SystemManage;
 using Panda.Domain.IRepository.SystemManage;
 using Panda.Domain.ViewModel;
 using Panda.Repository.SystemManage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Panda.Code.Cache;
 
 namespace Panda.Application.SystemManage
 {
@@ -71,7 +72,7 @@ namespace Panda.Application.SystemManage
         public bool ActionValidate(string roleId, string moduleId, string action)
         {
             var authorizeurldata = new List<AuthorizeActionModel>();
-            var cachedata = CacheFactory.Cache().GetCache<List<AuthorizeActionModel>>("authorizeurldata_" + roleId);
+            var cachedata = CacheFactory.Cache().Get<List<AuthorizeActionModel>>("authorizeurldata_" + roleId);
             if (cachedata == null)
             {
                 var moduledata = moduleApp.GetList();
@@ -90,7 +91,7 @@ namespace Panda.Application.SystemManage
                         authorizeurldata.Add(new AuthorizeActionModel { F_Id = moduleButtonEntity.F_ModuleId, F_UrlAddress = moduleButtonEntity.F_UrlAddress });
                     }
                 }
-                CacheFactory.Cache().WriteCache(authorizeurldata, "authorizeurldata_" + roleId, DateTime.Now.AddMinutes(5));
+                CacheFactory.Cache().Set("authorizeurldata_" + roleId, authorizeurldata, 5);
             }
             else
             {
