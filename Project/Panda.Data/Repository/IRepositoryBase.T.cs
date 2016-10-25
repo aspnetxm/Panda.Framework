@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Panda.Data
 {
@@ -16,7 +17,7 @@ namespace Panda.Data
     /// 仓储接口
     /// </summary>
     /// <typeparam name="TEntity">实体类型</typeparam>
-    public interface IRepositoryBase<TEntity> where TEntity : class,new()
+    public interface IRepositoryBase<TEntity> where TEntity : class, new()
     {
         int Insert(TEntity entity);
         int Insert(List<TEntity> entitys);
@@ -25,6 +26,7 @@ namespace Panda.Data
         int Delete(Expression<Func<TEntity, bool>> predicate);
         TEntity FindEntity(object keyValue);
         TEntity FindEntity(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> FindEntityAsync(Expression<Func<TEntity, bool>> predicate);
         IQueryable<TEntity> IQueryable();
         IQueryable<TEntity> IQueryable(Expression<Func<TEntity, bool>> predicate);
         List<TEntity> FindList(string strSql);

@@ -36,7 +36,7 @@ namespace Panda.Code.Cache
         /// <param name="data">缓存值</param>
         /// <param name="expireTime">超时时间（按分钟）,大于0有效</param>
         /// <returns></returns>
-        public void Set<T>(string key, T data, int? expireTime) where T : class
+        public void Set(string key, dynamic data, int? expireTime) 
         {
             if (string.IsNullOrWhiteSpace(key))
                 new NullReferenceException("Set方法的{key}参数值为空。");

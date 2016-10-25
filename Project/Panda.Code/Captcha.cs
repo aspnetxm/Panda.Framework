@@ -18,7 +18,7 @@ namespace Panda.Code
         private Bitmap image;
         private Random random = new Random();
 
-        public float FontSize { get; set; } = 16f;
+        public float FontSize { get; set; } = 20f;
         /// <summary>
         /// 验证码
         /// </summary>
@@ -36,31 +36,32 @@ namespace Panda.Code
         /// </summary>
         public bool QJGL { get; set; } = false;
 
-        public byte[] ImageData
+        public byte[] Image()
         {
-            get
+            GenerateImage();
+            byte[] result = null;
+            using (MemoryStream memoryStream = new MemoryStream())
             {
-                byte[] result = null;
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    image.Save(memoryStream, ImageFormat.Jpeg);
-                    result = memoryStream.GetBuffer();
-                }
-                return result;
+                image.Save(memoryStream, ImageFormat.Jpeg);
+                result = memoryStream.GetBuffer();
             }
+            return result;
+
         }
 
-        public Captcha( int len = 4 )
+        public Captcha(int len = 4)
         {
             length = len;
             Code = GenerateRandomCode();
-            GenerateImage();
         }
+         
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
             Dispose(true);
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -75,22 +76,23 @@ namespace Panda.Code
             Graphics graphics = Graphics.FromImage(bitmap);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             Rectangle rectangle = new Rectangle(0, 0, Width, Height);
-            HatchBrush hatchBrush = new HatchBrush(HatchStyle.SmallConfetti, Color.LightGray, Color.White);
+            HatchBrush hatchBrush = new HatchBrush(HatchStyle.DashedUpwardDiagonal, Color.LightGray, Color.White);
             graphics.FillRectangle(hatchBrush, rectangle);
             float num = (float)(rectangle.Height + 1);
-            Font font;
-            do
-            {
-                num -= 1f;
-                font = new Font(FontFamily.GenericSansSerif, num, FontStyle.Bold);
-            }
-            while (graphics.MeasureString(Code, font).Width > (float)rectangle.Width);
+            //Font font=new Font(new FontFamily("Times New Roman"), FontSize, FontStyle.Bold);
+            //do
+            //{
+            //    num -= 1f;
+            //    font = new Font(new FontFamily("Times New Roman"), num, FontStyle.Bold);
+            //}
+            //while (num > rectangle.Height - 10); //(graphics.MeasureString(Code, font).Width > (float)rectangle.Width);
 
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Center;
+            
             GraphicsPath graphicsPath = new GraphicsPath();
-            graphicsPath.AddString(Code, font.FontFamily, (int)font.Style, FontSize, rectangle, stringFormat);
+            graphicsPath.AddString(Code, new FontFamily("Times New Roman"), (int)FontStyle.Bold, FontSize, rectangle, stringFormat);
             float num2 = 4f;
             PointF[] destPoints = new PointF[]
             {
@@ -101,33 +103,39 @@ namespace Panda.Code
             };
             Matrix matrix = new Matrix();
             matrix.Translate(0f, 0f);
-            graphicsPath.Warp(destPoints, rectangle, matrix, WarpMode.Perspective, 0f);
-            hatchBrush = new HatchBrush(HatchStyle.Percent10, Color.Black, Color.SkyBlue);
-            graphics.FillPath(hatchBrush, graphicsPath);
+            graphicsPath.Warp(destPoints, rectangle, matrix, WarpMode.Perspective, 0.5f);
+            //hatchBrush = new HatchBrush(HatchStyle.Percent20, Color.Yellow, Color.Green);
 
-            if (QJGL)
-            {
-                int num3 = Math.Max(rectangle.Width, rectangle.Height);
-                for (int i = 0; i < (int)((float)(rectangle.Width * rectangle.Height) / 30f); i++)
-                {
-                    int x = random.Next(rectangle.Width);
-                    int y = random.Next(rectangle.Height);
-                    int num4 = random.Next(num3 / 50);
-                    int num5 = random.Next(num3 / 50);
-                    graphics.FillEllipse(hatchBrush, x, y, num4, num5);
-                }
-            }
+            Color[] colors = { Color.Red , Color.Blue, Color.Green, Color.MediumTurquoise, Color.Black, Color.Navy, Color.Indigo, Color.Purple,Color.DarkRed,Color.DarkBlue};
+            int clen = colors.Length;
 
-            font.Dispose();
+            LinearGradientBrush brush = new LinearGradientBrush(rectangle, colors[new Random().Next(clen)], colors[new Random(DateTime.Now.Second).Next(clen)], LinearGradientMode.Horizontal);
+            brush.SetSigmaBellShape(Convert.ToSingle(new Random().NextDouble()));
+            graphics.FillPath(brush, graphicsPath);
+
+            //if (QJGL)
+            //{
+            //    int num3 = Math.Max(rectangle.Width, rectangle.Height);
+            //    for (int i = 0; i < (int)((float)(rectangle.Width * rectangle.Height) / 30f); i++)
+            //    {
+            //        int x = random.Next(rectangle.Width);
+            //        int y = random.Next(rectangle.Height);
+            //        int num4 = random.Next(num3 / 50);
+            //        int num5 = random.Next(num3 / 50);
+            //        graphics.FillEllipse(hatchBrush, x, y, num4, num5);
+            //    }
+            //}
+
+     
             hatchBrush.Dispose();
             graphics.Dispose();
 
-            image = TwistImage(bitmap, true, 10, 1);
+            image = TwistImage(bitmap, true, new Random().Next(3), new Random().NextDouble() * 2 * 3.14);
         }
         private string GenerateRandomCode()
         {
             Random random = new Random();
-            char[] array = { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'd', 'e', 'f', 'h', 'k', 'm', 'n', 'r', 'x', 'y', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'W', 'X', 'Y' }; 
+            char[] array = { '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'd', 'e', 'f', 'h', 'k', 'm', 'n', 'r', 'x', 'y', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'W', 'X', 'Y' };
             int maxValue = array.Length - 1;
             string text = "";
             for (int i = 0; i < length; i++)
@@ -136,6 +144,8 @@ namespace Panda.Code
                 random.NextDouble();
                 random.Next(100, 1999);
             }
+            System.Diagnostics.Debug.Print(text);
+           
             return text;
         }
 

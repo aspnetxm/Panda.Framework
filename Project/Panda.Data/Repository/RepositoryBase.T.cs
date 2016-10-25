@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Panda.Data
 {
@@ -66,6 +67,10 @@ namespace Panda.Data
         public TEntity FindEntity(Expression<Func<TEntity, bool>> predicate)
         {
             return dbcontext.Set<TEntity>().FirstOrDefault(predicate);
+        }
+        public async Task<TEntity> FindEntityAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await dbcontext.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
         public IQueryable<TEntity> IQueryable()
         {

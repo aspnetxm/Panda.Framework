@@ -21,7 +21,7 @@ namespace Panda.Application.SystemSecurity
         public List<LogEntity> GetList(Pagination pagination, string queryJson)
         {
             var expression = ExtLinq.True<LogEntity>();
-            var queryParam = queryJson.ToJObject();
+            var queryParam = queryJson.ToObject();
             if (!queryParam["keyword"].IsEmpty())
             {
                 string keyword = queryParam["keyword"].ToString();
@@ -71,26 +71,28 @@ namespace Panda.Application.SystemSecurity
             expression = expression.And(t => t.F_Date <= operateTime);
             service.Delete(expression);
         }
-        public void WriteDbLog(bool result, string resultLog)
+
+        public void WriteLog(bool result, string resultLog, string ip)
         {
             LogEntity logEntity = new LogEntity();
             logEntity.F_Id = Common.GuId();
             logEntity.F_Date = DateTime.Now;
             logEntity.F_Account = OperatorProvider.Provider.GetCurrent().UserCode;
             logEntity.F_NickName = OperatorProvider.Provider.GetCurrent().UserName;
-            logEntity.F_IPAddress = Net.Ip;
-            logEntity.F_IPAddressName = Net.GetLocation(logEntity.F_IPAddress);
+            //logEntity.F_IPAddress = Net.Ip;
+            //logEntity.F_IPAddressName = Net.GetLocation(logEntity.F_IPAddress);
             logEntity.F_Result = result;
             logEntity.F_Description = resultLog;
             logEntity.Create();
             service.Insert(logEntity);
         }
-        public void WriteDbLog(LogEntity logEntity)
+
+        public void WriteLog(LogEntity logEntity)
         {
             logEntity.F_Id = Common.GuId();
             logEntity.F_Date = DateTime.Now;
-            logEntity.F_IPAddress = "117.81.192.182";
-            logEntity.F_IPAddressName = Net.GetLocation(logEntity.F_IPAddress);
+            //logEntity.F_IPAddress = "117.81.192.182";
+            //logEntity.F_IPAddressName = Net.GetLocation(logEntity.F_IPAddress);
             logEntity.Create();
             service.Insert(logEntity);
         }

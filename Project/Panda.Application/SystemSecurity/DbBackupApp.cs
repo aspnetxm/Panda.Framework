@@ -20,7 +20,7 @@ namespace Panda.Application.SystemSecurity
         public List<DbBackupEntity> GetList(string queryJson)
         {
             var expression = ExtLinq.True<DbBackupEntity>();
-            var queryParam = queryJson.ToJObject();
+            var queryParam = queryJson.ToObject();
             if (!queryParam["condition"].IsEmpty() && !queryParam["keyword"].IsEmpty())
             {
                 string condition = queryParam["condition"].ToString();
@@ -37,6 +37,7 @@ namespace Panda.Application.SystemSecurity
             }
             return service.IQueryable(expression).OrderByDescending(t => t.F_BackupTime).ToList();
         }
+
         public DbBackupEntity GetForm(string keyValue)
         {
             return service.FindEntity(keyValue);

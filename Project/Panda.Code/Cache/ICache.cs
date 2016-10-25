@@ -24,7 +24,7 @@ namespace Panda.Code.Cache
         /// <param name="key">key</param>
         /// <param name="data">缓存值</param>
         /// <param name="expireTime">超时时间（按分钟）,大于0有效</param>
-        void Set<T>(string key, T data, int? expireTime) where T : class;
+        void Set(string key, dynamic data, int? expireTime); 
 
         /// <summary>
         /// 缓存是否已存在
